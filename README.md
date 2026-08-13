@@ -26,10 +26,10 @@ remain preserved in [LEGACY-CU12-1.14.1.post1.md](LEGACY-CU12-1.14.1.post1.md).
 | Native GPU code | `sm_75`, `sm_80`, `sm_86`, `sm_90` | `sm_75`, `sm_80`, `sm_86`, `sm_90` |
 | Validated GPU | RTX 3090 (`sm_86`) | RTX 3090 (`sm_86`) |
 
-Release assets:
+Repository copies, also attached to the `v1.15.0` release:
 
-- `faiss_gpu_cu12_cuvs-1.15.0-cp312-cp312-manylinux_2_39_x86_64.whl`
-- `faiss_gpu_cu13_cuvs-1.15.0-cp312-cp312-manylinux_2_39_x86_64.whl`
+- [`faiss_gpu_cu12_cuvs-1.15.0-cp312-cp312-manylinux_2_39_x86_64.whl`](wheels/faiss_gpu_cu12_cuvs-1.15.0-cp312-cp312-manylinux_2_39_x86_64.whl)
+- [`faiss_gpu_cu13_cuvs-1.15.0-cp312-cp312-manylinux_2_39_x86_64.whl`](wheels/faiss_gpu_cu13_cuvs-1.15.0-cp312-cp312-manylinux_2_39_x86_64.whl)
 
 See [SHA256SUMS-1.15.0.txt](SHA256SUMS-1.15.0.txt) for release hashes and
 [VALIDATION.md](VALIDATION.md) for the executed test coverage. The permanent
