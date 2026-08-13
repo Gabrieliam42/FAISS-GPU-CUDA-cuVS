@@ -1,160 +1,107 @@
-# Facebook AI Similarity Search (FAISS) with NVIDIA's CUDA Vector Search (cuVS)
+# FAISS GPU CUDA cuVS wheels
 
-It is a fusion of Facebook AI Similarity Search (FAISS) and NVIDIA's CUDA Vector Search (cuVS).
+Validated, unofficial FAISS GPU wheels with NVIDIA cuVS support for CUDA 12
+and CUDA 13. The CUDA variants are separate PyPI distributions because their
+runtime dependency sets are mutually exclusive.
 
-PyPI project:
+## PyPI projects
 
-- https://pypi.org/project/faiss-gpu-cu12-cuvs/
-- https://pypi.org/project/faiss-gpu-cu12-cuvs/1.14.1.post1/
+- [faiss-gpu-cu12-cuvs](https://pypi.org/project/faiss-gpu-cu12-cuvs/)
+- [faiss-gpu-cu13-cuvs](https://pypi.org/project/faiss-gpu-cu13-cuvs/)
 
-This repo also contains the exact wheel file used for this build:
+The existing CUDA 12 releases, repository wheel, and original build notes
+remain preserved in [LEGACY-CU12-1.14.1.post1.md](LEGACY-CU12-1.14.1.post1.md).
 
-```text
-wheels/faiss_gpu_cu12_cuvs-1.14.1.post1-cp312-cp312-manylinux_2_38_x86_64.whl
+## Version 1.15.0
+
+| Property | CUDA 12 variant | CUDA 13 variant |
+|---|---|---|
+| Package | `faiss-gpu-cu12-cuvs` | `faiss-gpu-cu13-cuvs` |
+| Version | `1.15.0` | `1.15.0` |
+| Python | CPython 3.12 | CPython 3.12 |
+| Platform | Linux x86-64 / WSL2 / Ubuntu 24.04+ | Linux x86-64 / WSL2 / Ubuntu 24.04+ |
+| Wheel tag | `manylinux_2_39_x86_64` | `manylinux_2_39_x86_64` |
+| CUDA target | 12.9 Update 1 | 13.0 |
+| cuVS / RAFT / RMM | 26.6.0 | 26.6.0 |
+| Native GPU code | `sm_75`, `sm_80`, `sm_86`, `sm_90` | `sm_75`, `sm_80`, `sm_86`, `sm_90` |
+| Validated GPU | RTX 3090 (`sm_86`) | RTX 3090 (`sm_86`) |
+
+Release assets:
+
+- `faiss_gpu_cu12_cuvs-1.15.0-cp312-cp312-manylinux_2_39_x86_64.whl`
+- `faiss_gpu_cu13_cuvs-1.15.0-cp312-cp312-manylinux_2_39_x86_64.whl`
+
+See [SHA256SUMS-1.15.0.txt](SHA256SUMS-1.15.0.txt) for release hashes and
+[VALIDATION.md](VALIDATION.md) for the executed test coverage. The permanent
+release notes are in [RELEASE_NOTES-1.15.0.md](RELEASE_NOTES-1.15.0.md).
+
+## Installation
+
+Choose exactly one FAISS CUDA variant in an environment.
+
+CUDA 12.9 / PyTorch cu129:
+
+```bash
+pip install --extra-index-url https://pypi.nvidia.com \
+  faiss-gpu-cu12-cuvs==1.15.0
 ```
 
-## Build Summary
+CUDA 13.0 / PyTorch cu130:
 
-| Property | Value |
-|---|---|
-| Package name | `faiss-gpu-cu12-cuvs` |
-| Package version | `1.14.1.post1` |
-| Wheel tag | `cp312-cp312-manylinux_2_38_x86_64` |
-| FAISS version | `1.14.1` |
-| Python | `3.12` |
-| CUDA toolkit used for build | `12.9.1` |
-| GPU backend | `CUDA + cuBLAS + cuVS` |
-| RAPIDS cuVS runtime line | `25.10.0` |
-| GPU target | `sm_86` Ampere native build |
-| CPU BLAS backend | `OpenBLAS` |
-| Platform | Linux x86_64 / WSL2 |
+```bash
+pip install --extra-index-url https://pypi.nvidia.com \
+  faiss-gpu-cu13-cuvs==1.15.0
+```
 
-## Verified Stack
+The wheels pin their CUDA and RAPIDS runtime packages. The host still requires
+a compatible NVIDIA driver. FAISS does not link cuDNN directly; coexistence was
+validated with the cuDNN packages selected by the corresponding PyTorch 2.9.1
+wheel.
 
-This wheel was verified with the following stack:
+## Validated stacks
+
+CUDA 12:
 
 ```text
 torch==2.9.1+cu129
 torchaudio==2.9.1+cu129
 torchvision==0.24.1+cu129
-flash-attn==2.8.3
+flash-attn==2.8.3 (cu12 / torch 2.9 / CXX11 ABI true asset)
 triton==3.5.1
-Python 3.12
-CUDA runtime line 12.9.1
 ```
 
-Validation covered:
+CUDA 13:
 
-- import of `faiss`, `torch`, `flash_attn`, and `triton`
-- `faiss.StandardGpuResources()`
-- `faiss.GpuIndexFlatL2`
-- GPU add/search smoke test
-- presence of cuVS-facing symbols such as `GpuIndexCagra` and `IndexHNSWCagra`
-
-## Compatibility
-
-This specific wheel is tagged `manylinux_2_38_x86_64`.
-
-That means the practical Linux/glibc floor is newer than Ubuntu 22.04. Treat this wheel as intended for:
-
-- Ubuntu 24.04+
-- WSL2 distros with glibc 2.38+
-
-For older glibc baselines, this exact wheel is not the right artifact.
-
-## Files
-
-- Wheel in this repo: [wheels/faiss_gpu_cu12_cuvs-1.14.1.post1-cp312-cp312-manylinux_2_38_x86_64.whl](wheels/faiss_gpu_cu12_cuvs-1.14.1.post1-cp312-cp312-manylinux_2_38_x86_64.whl)
-- PyPI release page: https://pypi.org/project/faiss-gpu-cu12-cuvs/1.14.1.post1/
-
-## Installation
-
-Install into a Python 3.12 Linux environment.
-
-Recommended: install from PyPI by package name:
-
-```bash
-pip install --extra-index-url https://pypi.nvidia.com \
-  faiss-gpu-cu12-cuvs==1.14.1.post1
+```text
+torch==2.9.1+cu130
+torchaudio==2.9.1+cu130
+torchvision==0.24.1+cu130
+flash-attn==2.8.3 (cu13 / torch 2.9 / CXX11 ABI true asset)
+triton==3.5.1
+xformers==0.0.33.post2
 ```
 
-Alternative: install from the wheel checked into this repo:
+CUDA 13.3 is not claimed because its runtime failed device discovery on the
+validated WSL2 system. CUDA 12.9.0 is not claimed for the exact cu129 stack
+because its toolkit metapackage conflicts with PyTorch's cuBLAS 12.9.1.4 pin.
 
-```bash
-pip install --extra-index-url https://pypi.nvidia.com \
-  ./wheels/faiss_gpu_cu12_cuvs-1.14.1.post1-cp312-cp312-manylinux_2_38_x86_64.whl
-```
+## Legacy CUDA 12 artifact
 
-Important:
+The prior wheel remains available and is not replaced or removed:
 
-- `faiss-gpu-cu12-cuvs` is published on PyPI.
-- `https://pypi.nvidia.com` is only included so `pip` can resolve NVIDIA/RAPIDS dependencies such as `libcuvs-cu12`, `libraft-cu12`, `librmm-cu12`, `nvidia-cublas-cu12`, and related CUDA-side packages.
-- This FAISS wheel itself is not hosted on NVIDIA's package index.
-- Do not use the human-facing PyPI project page URL as the install target; use the package name, the local wheel, or a direct wheel URL.
+- [faiss_gpu_cu12_cuvs-1.14.1.post1-cp312-cp312-manylinux_2_38_x86_64.whl](wheels/faiss_gpu_cu12_cuvs-1.14.1.post1-cp312-cp312-manylinux_2_38_x86_64.whl)
+- [PyPI 1.14.1.post1 release](https://pypi.org/project/faiss-gpu-cu12-cuvs/1.14.1.post1/)
 
-If you want the exact CUDA-side dependency line aligned with the validated build, install these first:
+## Provenance
 
-```bash
-pip install --extra-index-url https://pypi.nvidia.com \
-  nvidia-cuda-runtime-cu12==12.9.79 \
-  nvidia-cublas-cu12==12.9.1.4 \
-  nvidia-curand-cu12==10.3.10.19 \
-  nvidia-cusolver-cu12==11.7.5.82 \
-  nvidia-cusparse-cu12==12.5.10.65 \
-  nvidia-nvjitlink-cu12==12.9.86 \
-  libcuvs-cu12==25.10.0 \
-  libraft-cu12==25.10.0 \
-  librmm-cu12==25.10.0 \
-  rapids-logger==0.1.19
-```
+- FAISS: upstream `v1.15.0`
+- Packaging scaffold: [Di-Is/faiss-gpu-wheels](https://github.com/Di-Is/faiss-gpu-wheels)
+- cuVS integration guidance: [GPU Faiss with cuVS](https://github.com/facebookresearch/faiss/wiki/GPU-Faiss-with-cuVS)
 
-For the matching PyTorch stack:
-
-```bash
-pip install \
-  --extra-index-url https://download.pytorch.org/whl/cu129 \
-  torch==2.9.1+cu129 \
-  torchaudio==2.9.1+cu129 \
-  torchvision==0.24.1+cu129
-```
-
-FlashAttention and Triton used during validation:
-
-```bash
-pip install \
-  "flash-attn @ https://github.com/Dao-AILab/flash-attention/releases/download/v2.8.3/flash_attn-2.8.3+cu12torch2.9cxx11abiTRUE-cp312-cp312-linux_x86_64.whl" \
-  "triton @ https://download.pytorch.org/whl/triton/triton-3.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl"
-```
-
-## Runtime Check
-
-```python
-import faiss
-import numpy as np
-
-res = faiss.StandardGpuResources()
-index = faiss.GpuIndexFlatL2(res, 4)
-
-xb = np.array([
-    [1.0, 0.0, 0.0, 0.0],
-    [0.0, 1.0, 0.0, 0.0],
-    [0.0, 0.0, 1.0, 0.0],
-    [0.0, 0.0, 0.0, 1.0],
-], dtype="float32")
-
-index.add(xb)
-D, I = index.search(xb[:2], 2)
-print(I)
-print(D)
-```
-
-## Notes
-
-- This is an unofficial wheel build, not an official Meta or NVIDIA distribution.
-- The wheel includes cuVS-enabled FAISS support, which is the point of this repo.
-- `OpenBLAS` is the CPU BLAS backend linked into FAISS; the GPU path uses CUDA libraries including `cuBLAS`.
-- The build target is Ampere `sm_86`; newer architectures may work if the runtime path is compatible, but this repo is documenting the validated build, not claiming universal GPU coverage.
+These are downstream wheel builds, not official Meta or NVIDIA artifacts.
+Third-party components remain governed by their respective licenses.
 
 ## License
 
-FAISS is licensed under the [MIT License](https://github.com/facebookresearch/faiss/blob/main/LICENSE).
+See [LICENSE](LICENSE). Third-party FAISS, cuVS, RAPIDS, CUDA, and packaging
+components retain their own license terms.

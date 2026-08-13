@@ -1,0 +1,2 @@
+20e104ce0754ce53fd5d4bee1036ab8aae2f354f8248fa055adbeeb7a38fc63f  faiss_gpu_cu12_cuvs-1.15.0-cp312-cp312-manylinux_2_39_x86_64.whl
+2954f14bef772a206841898c429911a6b28dba589a1912f541785396e7e9cb28  faiss_gpu_cu13_cuvs-1.15.0-cp312-cp312-manylinux_2_39_x86_64.whl

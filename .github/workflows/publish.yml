@@ -1,43 +1,70 @@
-name: Publish to PyPI
+name: Publish release wheel to PyPI
 
 on:
-  release:
-    types: [published]
   workflow_dispatch:
     inputs:
       tag:
-        description: "Release tag to publish (e.g. v1.14.1.post1)"
+        description: Release tag containing the wheel
         required: true
-        default: "v1.14.1.post1"
+        default: v1.15.0
+      package:
+        description: CUDA package variant to publish
+        required: true
+        type: choice
+        options:
+          - cu12
+          - cu13
+
+concurrency:
+  group: pypi-${{ inputs.package }}-${{ inputs.tag }}
+  cancel-in-progress: false
 
 jobs:
   publish:
-    name: Publish to PyPI
+    name: Publish ${{ inputs.package }} from ${{ inputs.tag }}
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
+      contents: read
       id-token: write
     steps:
-      - name: Resolve tag
-        id: tag
+      - name: Select release asset
+        id: asset
+        shell: bash
+        env:
+          PACKAGE_VARIANT: ${{ inputs.package }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "tag=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
-          else
-            echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-          fi
+          case "$PACKAGE_VARIANT" in
+            cu12)
+              echo 'pattern=faiss_gpu_cu12_cuvs-*.whl' >> "$GITHUB_OUTPUT"
+              ;;
+            cu13)
+              echo 'pattern=faiss_gpu_cu13_cuvs-*.whl' >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              exit 2
+              ;;
+          esac
 
-      - name: Download wheel from release
-        run: |
-          mkdir -p dist
-          gh release download ${{ steps.tag.outputs.tag }} \
-            --pattern "*.whl" \
-            --dir dist/ \
-            --repo ${{ github.repository }}
+      - name: Download one wheel from the release
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          mkdir -p dist
+          gh release download "$RELEASE_TAG" \
+            --pattern "${{ steps.asset.outputs.pattern }}" \
+            --dir dist \
+            --repo "${{ github.repository }}"
+          test "$(find dist -maxdepth 1 -name '*.whl' | wc -l)" -eq 1
 
-      - name: Publish to PyPI
+      - name: Validate wheel metadata
+        run: |
+          python -m pip install --disable-pip-version-check twine==6.2.0
+          python -m twine check dist/*.whl
+
+      - name: Publish with PyPI Trusted Publishing
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: dist/
+          packages-dir: dist
+          skip-existing: true
