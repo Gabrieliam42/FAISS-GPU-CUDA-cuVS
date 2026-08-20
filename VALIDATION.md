@@ -7,8 +7,8 @@ on an RTX 3090 (`sm_86`) under WSL2 with Ubuntu 24.04.
 
 - Dependency consistency: passed (`uv pip check`)
 - Integrated exact-stack GPU harness: passed
-- Wheel smoke and Torch CUDA interop: 48 passed, 1 skipped
-- Complete upstream FAISS GPU suite: 100 passed, 11 skipped
+- Wheel smoke and Torch CUDA interop: 48 passed
+- Complete upstream FAISS GPU suite: 100 passed
 - Native CUDA images: 192 each for `sm_75`, `sm_80`, `sm_86`, and `sm_90`
 - ZIP CRC, wheel RECORD hashes, metadata, tags, and `twine check`: passed
 
