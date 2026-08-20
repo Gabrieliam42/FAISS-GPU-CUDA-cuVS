@@ -1,8 +1,7 @@
 # FAISS GPU CUDA cuVS wheels
 
-Validated, unofficial FAISS GPU wheels with NVIDIA cuVS support for CUDA 12
-and CUDA 13. The CUDA variants are separate PyPI distributions because their
-runtime dependency sets are mutually exclusive.
+Validated FAISS GPU wheels with NVIDIA cuVS support for CUDA 12 and CUDA 13.
+The CUDA variants are separate PyPI distributions because their runtime dependency sets are mutually exclusive.
 
 ## PyPI projects
 
